@@ -5,7 +5,7 @@ import {
 	IOrderResponse,
 } from '../../types';
 
-export class ShopApi {
+export class WebLarekApi {
 	constructor(protected api: IApi) {}
 
 	getProducts(): Promise<IProductListResponse> {

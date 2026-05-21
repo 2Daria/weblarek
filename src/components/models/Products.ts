@@ -1,8 +1,9 @@
 import { IProduct } from '../../types';
 
-export class Catalog {
+export class Products {
 	protected items: IProduct[] = [];
-	protected selected: IProduct | null = null;
+
+	protected selectedItem: IProduct | null = null;
 
 	setItems(items: IProduct[]): void {
 		this.items = items;
@@ -17,10 +18,10 @@ export class Catalog {
 	}
 
 	setSelectedItem(item: IProduct): void {
-		this.selected = item;
+		this.selectedItem = item;
 	}
 
 	getSelectedItem(): IProduct | null {
-		return this.selected;
+		return this.selectedItem;
 	}
 }

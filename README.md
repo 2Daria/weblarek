@@ -105,12 +105,30 @@ Presenter - презентер содержит основную логику п
 ### `IProduct`
 
 Описывает товар.
+```ts
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}
+```
 
 `price === null` означает «бесценно» — товар нельзя купить.
 
 ### `IBuyer`
 
 Данные покупателя, указываемые при оформлении заказа.
+```ts
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+```
 
 ### `TPayment`
 
