@@ -44,7 +44,9 @@ console.log('Товары в корзине после удаления:', baske
 basketModel.clear();
 console.log('Товары в корзине после очистки:', basketModel.getItems());
 
-const api = new WebLarekApi(new Api(API_URL));
+//const api = new WebLarekApi(new Api(API_URL));
+const baseApi = new Api(API_URL);
+const api = new WebLarekApi(baseApi);
 
 api
 	.getProducts()
