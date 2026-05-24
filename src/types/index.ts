@@ -43,3 +43,68 @@ export interface IOrderResponse {
 	id: string;
 	total: number;
 }
+
+// View
+
+export interface IPageData {
+	counter: number;
+	catalog: HTMLElement[];
+}
+
+export interface IModalData {
+	content: HTMLElement;
+}
+
+export interface ICard {
+	title: string;
+	category: string;
+	price: number | null;
+}
+
+export interface ICardCatalog extends ICard {
+	image: string;
+}
+
+export interface ICardPreview extends ICardCatalog {
+	description: string;
+	inBasket: boolean;
+}
+
+export interface ICardBasket {
+	title: string;
+	price: number | null;
+	index: number;
+}
+
+export interface IBasketView {
+	items: HTMLElement[];
+	total: number;
+	isEmpty: boolean;
+}
+
+export interface IFormState {
+	valid: boolean;
+	errors: string;
+}
+
+export interface IOrderFormData {
+	payment: TPayment;
+	address: string;
+}
+
+export interface IContactsFormData {
+	email: string;
+	phone: string;
+}
+
+export interface ISuccessData {
+	total: number;
+}
+
+export interface ICardActions {
+	onClick: (event: MouseEvent) => void;
+}
+
+export interface ISuccessActions {
+	onClick: () => void;
+}
