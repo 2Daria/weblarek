@@ -44,8 +44,6 @@ export interface IOrderResponse {
 	total: number;
 }
 
-// View
-
 export interface IPageData {
 	counter: number;
 	catalog: HTMLElement[];
@@ -57,22 +55,24 @@ export interface IModalData {
 
 export interface ICard {
 	title: string;
-	category: string;
 	price: number | null;
 }
 
 export interface ICardCatalog extends ICard {
+	id: string;
+	category: string;
 	image: string;
 }
 
-export interface ICardPreview extends ICardCatalog {
+export interface ICardPreview extends ICard {
+	category: string;
+	image: string;
 	description: string;
 	inBasket: boolean;
 }
 
-export interface ICardBasket {
-	title: string;
-	price: number | null;
+export interface ICardBasket extends ICard {
+	id: string;
 	index: number;
 }
 
@@ -99,12 +99,4 @@ export interface IContactsFormData {
 
 export interface ISuccessData {
 	total: number;
-}
-
-export interface ICardActions {
-	onClick: (event: MouseEvent) => void;
-}
-
-export interface ISuccessActions {
-	onClick: () => void;
 }

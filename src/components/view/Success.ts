@@ -1,12 +1,13 @@
 import { Component } from '../base/Component';
-import { ISuccessData, ISuccessActions } from '../../types';
+import { IEvents } from '../base/Events';
+import { ISuccessData } from '../../types';
 import { ensureElement } from '../../utils/utils';
 
 export class Success extends Component<ISuccessData> {
 	protected descriptionElement: HTMLElement;
 	protected closeButton: HTMLButtonElement;
 
-	constructor(container: HTMLElement, actions: ISuccessActions) {
+	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
 
 		this.descriptionElement = ensureElement<HTMLElement>(
@@ -18,7 +19,9 @@ export class Success extends Component<ISuccessData> {
 			container
 		);
 
-		this.closeButton.addEventListener('click', actions.onClick);
+		this.closeButton.addEventListener('click', () => {
+			this.events.emit('success:close');
+		});
 	}
 
 	set total(value: number) {

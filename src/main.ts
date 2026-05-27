@@ -7,8 +7,7 @@ import { WebLarekApi } from './components/services/WebLarekApi';
 import { EventEmitter } from './components/base/Events';
 import { Api } from './components/base/Api';
 import { API_URL } from './utils/constants';
-//import { IProduct } from './types';
-import { IProduct, IBuyer, IOrderRequest } from './types';
+import { IBuyer, IOrderRequest } from './types';
 import { ensureElement, cloneTemplate } from './utils/utils';
 
 import { Page } from './components/view/Page';
@@ -46,17 +45,18 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basketView = new BasketView(cloneTemplate(basketTemplate), events);
 const orderForm = new OrderForm(cloneTemplate(orderTemplate), events);
 const contactsForm = new ContactsForm(cloneTemplate(contactsTemplate), events);
-const success = new Success(cloneTemplate(successTemplate), {
-	onClick: () => modal.close(),
-});
+//const success = new Success(cloneTemplate(successTemplate), {
+	//onClick: () => modal.close(),
+//});
+const cardPreview = new CardPreview(cloneTemplate(cardPreviewTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), events);
 
 // Обработчики
 events.on('catalog:changed', () => {
 	const cards = productsModel.getItems().map((item) => {
-		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
-			onClick: () => productsModel.setSelectedItem(item),
-		});
+		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), events);
 		return card.render({
+			id: item.id,
 			title: item.title,
 			category: item.category,
 			price: item.price,
@@ -66,18 +66,15 @@ events.on('catalog:changed', () => {
 	page.render({ catalog: cards });
 });
 
-events.on('preview:changed', (item: IProduct) => {
-	const card = new CardPreview(cloneTemplate(cardPreviewTemplate), {
-		onClick: () => {
-			if (basketModel.hasItem(item.id)) {
-				basketModel.removeItem(item);
-			} else {
-				basketModel.addItem(item);
-			}
-			modal.close();
-		},
-	});
-	modal.content = card.render({
+events.on('card:select', (payload: { id: string }) => {
+	const item = productsModel.getItemById(payload.id);
+	if (item) productsModel.setSelectedItem(item);
+});
+
+events.on('preview:changed', () => {
+	const item = productsModel.getSelectedItem();
+	if (!item) return;
+	modal.content = cardPreview.render({
 		title: item.title,
 		category: item.category,
 		price: item.price,
@@ -88,14 +85,29 @@ events.on('preview:changed', (item: IProduct) => {
 	modal.open();
 });
 
+events.on('preview:toggle', () => {
+	const item = productsModel.getSelectedItem();
+	if (!item) return;
+	if (basketModel.hasItem(item.id)) {
+		basketModel.removeItem(item);
+	} else {
+		basketModel.addItem(item);
+	}
+	modal.close();
+});
+
+events.on('basket:remove', (payload: { id: string }) => {
+	const item = basketModel.getItems().find((it) => it.id === payload.id);
+	if (item) basketModel.removeItem(item);
+});
+
 events.on('basket:changed', () => {
 	page.counter = basketModel.getCount();
 
 	const items = basketModel.getItems().map((item, index) => {
-		const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
-			onClick: () => basketModel.removeItem(item),
-		});
+		const card = new CardBasket(cloneTemplate(cardBasketTemplate), events);
 		return card.render({
+			id: item.id,
 			title: item.title,
 			price: item.price,
 			index: index + 1,
@@ -188,7 +200,10 @@ events.on('contacts:submit', () => {
 		});
 });
 
-// Запрос каталога
+events.on('success:close', () => {
+	modal.close();
+});
+
 api
 	.getProducts()
 	.then((data) => {
