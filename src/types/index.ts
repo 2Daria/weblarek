@@ -58,8 +58,11 @@ export interface ICard {
 	price: number | null;
 }
 
+export interface ICardActions {
+	onClick: (event: MouseEvent) => void;
+}
+
 export interface ICardCatalog extends ICard {
-	id: string;
 	category: string;
 	image: string;
 }
@@ -72,7 +75,6 @@ export interface ICardPreview extends ICard {
 }
 
 export interface ICardBasket extends ICard {
-	id: string;
 	index: number;
 }
 

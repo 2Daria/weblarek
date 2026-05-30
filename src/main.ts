@@ -7,7 +7,7 @@ import { WebLarekApi } from './components/services/WebLarekApi';
 import { EventEmitter } from './components/base/Events';
 import { Api } from './components/base/Api';
 import { API_URL } from './utils/constants';
-import { IBuyer, IOrderRequest } from './types';
+import { IBuyer, IOrderRequest, IProduct } from './types';
 import { ensureElement, cloneTemplate } from './utils/utils';
 
 import { Page } from './components/view/Page';
@@ -54,9 +54,10 @@ const success = new Success(cloneTemplate(successTemplate), events);
 // Обработчики
 events.on('catalog:changed', () => {
 	const cards = productsModel.getItems().map((item) => {
-		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), events);
+		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
+			onClick: () => events.emit('card:select', { id: item.id }),
+		});
 		return card.render({
-			id: item.id,
 			title: item.title,
 			category: item.category,
 			price: item.price,
@@ -96,18 +97,18 @@ events.on('preview:toggle', () => {
 	modal.close();
 });
 
-events.on('basket:remove', (payload: { id: string }) => {
-	const item = basketModel.getItems().find((it) => it.id === payload.id);
-	if (item) basketModel.removeItem(item);
+events.on('basket:remove', (item: IProduct) => {
+	basketModel.removeItem(item);
 });
 
 events.on('basket:changed', () => {
 	page.counter = basketModel.getCount();
 
 	const items = basketModel.getItems().map((item, index) => {
-		const card = new CardBasket(cloneTemplate(cardBasketTemplate), events);
+		const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
+			onClick: () => events.emit('basket:remove', item),
+		});
 		return card.render({
-			id: item.id,
 			title: item.title,
 			price: item.price,
 			index: index + 1,
